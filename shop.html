@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Shop – Bloopix Studio</title>
 
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+<link rel="alternate icon" href="assets/images/favicon.svg">
+<link rel="apple-touch-icon" href="assets/images/favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/css/style.css">
 
 <!-- GSAP -->
-<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-<script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 
 <!-- Lenis -->
-<script src="https://unpkg.com/@studio-freight/lenis@1.0.39/bundled/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1/bundled/lenis.min.js"></script>
 </head>
 
 <body>
@@ -59,7 +67,7 @@
 
   <div class="grid">
     <div class="product-card">
-      <img src="assets\images\Store\warning.png">
+      <img src="assets/images/Store/warning.png" loading="lazy" alt="I’m Warning You sticker">
       <h3>I’m Warning You – Cute Couple Chibi Art</h3>
       <div class="price">Available on Redbubble</div>
 
@@ -74,7 +82,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\free sprit.png">
+      <img src="assets/images/Store/free sprit.png" loading="lazy" alt="Free Spirit Drive sticker">
       <h3>Free Spirit Drive – Whimsical Pastel Fantasy</h3>
       <div class="price">Available on Redbubble</div>
 
@@ -88,7 +96,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\heart.png">
+      <img src="assets/images/Store/heart.png" loading="lazy" alt="Soft Heart, Strong Mind sticker">
       <h3>Soft Heart, Strong Mind – Emotional Resilience Art</h3>
       <div class="price">Available on Redbubble</div>
 
@@ -102,7 +110,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\surf.png">
+      <img src="assets/images/Store/surf.png" loading="lazy" alt="Surf More, Worry Less sticker">
       <h3>Surf More, Worry Less – Kawaii Surfer Art</h3>
       <div class="price">Available on Redbubble</div>
 
@@ -116,7 +124,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\oops.png">
+      <img src="assets/images/Store/oops.png" loading="lazy" alt="Oops… Magic! sticker">
       <h3>Oops… Magic! – Cute Witch Aesthetic</h3>
      <div class="price">Available on Redbubble</div>
 
@@ -130,7 +138,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\warrior.png">
+      <img src="assets/images/Store/warrior.png" loading="lazy" alt="Obsidian Warden sticker">
       <h3>Obsidian Warden</h3>
      <div class="price">Available on Redbubble</div>
 
@@ -144,7 +152,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets\images\Store\void girl.png">
+      <img src="assets/images/Store/void girl.png" loading="lazy" alt="Astral Dancer sticker">
       <h3>Astral Dancer</h3>
      <div class="price">Available on Redbubble</div>
 
@@ -160,12 +168,13 @@
 </section>
 
 <footer>
-  <div class="footer-container">
+  <div class="footer-inner">
 
-    <!-- Request a Custom Sticker Card -->
-    <div class="footer-card">
-      <h3>Request a Custom Artwork</h3>
-      <p>Have an idea? Share it with us and we might turn it into a unique design!</p>
+    <div class="footer-cta">
+      <div class="footer-cta-copy">
+        <h3>Have an idea for a sticker?</h3>
+        <p>Share it with us and we might turn it into a unique design.</p>
+      </div>
       <form class="footer-request-form" action="https://formspree.io/f/mnjjjqpb" method="POST">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Your Email" required>
@@ -174,35 +183,49 @@
       </form>
     </div>
 
-    <!-- Social Links Card -->
-  <div class="footer-card">
-    <h3>Follow Us</h3>
-    <p>Stay updated with our latest designs and launches.</p>
-    <div class="social-links-grid">
-     <a href="https://bloopistudio.github.io/bloopix-studio/" target="_blank" class="social-btn">
-      <img src="assets/images/footer/http.svg" alt="Internet">
-      <span>Bloopix</span>
-     </a>
-     <a href="https://www.facebook.com/yourhandle" target="_blank" class="social-btn">
-      <img src="assets/images/footer/pintrest.svg" alt="Pintrest">
-      <span>Pintrest</span>
-     </a>
-     <a href="https://www.redbubble.com/people/Bloopix-Studio/shop?asc=u" target="_blank" class="social-btn">
-      <img src="assets/images/footer/redbubble.svg" alt="Redbubble">
-      <span>Redbubble</span>
-     </a>
-      <a href="https://www.instagram.com/bloopixstudio/?utm_source=ig_web_button_share_sheet" target="_blank" class="social-btn">
-      <img src="assets/images/footer/instagram.svg" alt="Instagram">
-      <span>Instagram</span>
-     </a>
-   </div>
-  </div>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">BLOOPIX</a>
+        <p>Independent design studio crafting premium, expressive stickers — designed with motion and intent.</p>
+      </div>
 
+      <nav class="footer-col" aria-label="Footer navigation">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
 
-  </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <div class="social-links-grid">
+         <a href="https://bloopistudio.github.io/bloopix-studio/" target="_blank" class="social-btn">
+          <img src="assets/images/footer/http.svg" alt="Internet">
+          <span>Bloopix</span>
+         </a>
+         <a href="https://www.facebook.com/yourhandle" target="_blank" class="social-btn">
+          <img src="assets/images/footer/pintrest.svg" alt="Pintrest">
+          <span>Pintrest</span>
+         </a>
+         <a href="https://www.redbubble.com/people/Bloopix-Studio/shop?asc=u" target="_blank" class="social-btn">
+          <img src="assets/images/footer/redbubble.svg" alt="Redbubble">
+          <span>Redbubble</span>
+         </a>
+          <a href="https://www.instagram.com/bloopixstudio/?utm_source=ig_web_button_share_sheet" target="_blank" class="social-btn">
+          <img src="assets/images/footer/instagram.svg" alt="Instagram">
+          <span>Instagram</span>
+         </a>
+       </div>
+      </div>
+    </div>
 
-  <div class="footer-bottom">
-    <p>© 2026 Bloopix Studio. All rights reserved.</p>
+    <div class="footer-bottom">
+      <p>© 2026 Bloopix Studio. All rights reserved.</p>
+    </div>
+
   </div>
 </footer>
 

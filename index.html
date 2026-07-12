@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Bloopix Studio</title>
- 
+
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="alternate icon" href="assets/images/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/images/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/style.css" />
 
@@ -38,6 +46,13 @@
   <p>Minimal, expressive sticker designs crafted with motion and intent.</p>
 </section>
 
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Handcrafted Designs</span><span>Waterproof &amp; Durable</span><span>Vinyl Stickers</span><span>Designed With Intent</span>
+    <span>Handcrafted Designs</span><span>Waterproof &amp; Durable</span><span>Vinyl Stickers</span><span>Designed With Intent</span>
+  </div>
+</div>
+
 <section class="section">
   <h2 class="section-title">Featured Stickers</h2>
 
@@ -48,7 +63,7 @@
   <!-- CARD 1 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets/images/Store/surf.png">
+      <img src="assets/images/Store/surf.png" loading="lazy" alt="Surf More, Worry Less sticker">
       <h3>Surf More, Worry Less</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -57,7 +72,7 @@
   <!-- CARD 2 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets/images/Store/free sprit.png">
+      <img src="assets/images/Store/free sprit.png" loading="lazy" alt="Free Spirit Girl in Car sticker">
       <h3>Free Spirit Girl in Car</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -66,7 +81,7 @@
   <!-- CARD 3 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets/images/Store/oops.png">
+      <img src="assets/images/Store/oops.png" loading="lazy" alt="Oops… Magic! Cute Witch sticker">
       <h3>Oops… Magic! – Cute Witch</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -75,7 +90,7 @@
   <!-- CARD 4 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets\images\Store\heart.png">
+      <img src="assets/images/Store/heart.png" loading="lazy" alt="Soft Heart, Strong Mind sticker">
       <h3>Soft Heart, Strong Mind – Emotional Resilience Art</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -84,7 +99,7 @@
   <!-- CARD 5 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets\images\Store\warning.png">
+      <img src="assets/images/Store/warning.png" loading="lazy" alt="I’m Warning You sticker">
       <h3>I’m Warning You – Cute Couple Chibi Art</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -93,7 +108,7 @@
   <!-- CARD 6 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets\images\Store\void girl.png">
+      <img src="assets/images/Store/void girl.png" loading="lazy" alt="Astral Dancer sticker">
       <h3>Astral Dancer – Cosmic Feminine Energy</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -102,7 +117,7 @@
   <!-- CARD 7 -->
   <a href="shop.html" class="product-card-link">
     <div class="product-card">
-      <img src="assets\images\Store\warrior.png">
+      <img src="assets/images/Store/warrior.png" loading="lazy" alt="Shadow Sentinel sticker">
       <h3>Shadow Sentinel with Glowing Ethereal Eyes</h3>
       <div class="view-btn">Visit Shop</div>
     </div>
@@ -114,12 +129,13 @@
 
 
 <footer>
-  <div class="footer-container">
+  <div class="footer-inner">
 
-    <!-- Request a Custom Sticker Card -->
-    <div class="footer-card">
-      <h3>Request a Custom Artwork</h3>
-      <p>Have an idea? Share it with us and we might turn it into a unique design!</p>
+    <div class="footer-cta">
+      <div class="footer-cta-copy">
+        <h3>Have an idea for a sticker?</h3>
+        <p>Share it with us and we might turn it into a unique design.</p>
+      </div>
       <form class="footer-request-form" action="https://formspree.io/f/mnjjjqpb" method="POST">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Your Email" required>
@@ -128,89 +144,54 @@
       </form>
     </div>
 
-    <!-- Social Links Card -->
-  <div class="footer-card">
-    <h3>Follow Us</h3>
-    <p>Stay updated with our latest designs and launches.</p>
-    <div class="social-links-grid">
-     <a href="https://bloopistudio.github.io/bloopix-studio/" target="_blank" class="social-btn">
-      <img src="assets/images/footer/http.svg" alt="Internet">
-      <span>Bloopix</span>
-     </a>
-     <a href="https://www.facebook.com/yourhandle" target="_blank" class="social-btn">
-      <img src="assets/images/footer/pintrest.svg" alt="Pintrest">
-      <span>Pintrest</span>
-     </a>
-     <a href="https://www.redbubble.com/people/Bloopix-Studio/shop?asc=u" target="_blank" class="social-btn">
-      <img src="assets/images/footer/redbubble.svg" alt="Redbubble">
-      <span>Redbubble</span>
-     </a>
-      <a href="https://www.instagram.com/bloopixstudio/?utm_source=ig_web_button_share_sheet" target="_blank" class="social-btn">
-      <img src="assets/images/footer/instagram.svg" alt="Instagram">
-      <span>Instagram</span>
-     </a>
-   </div>
-  </div>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">BLOOPIX</a>
+        <p>Independent design studio crafting premium, expressive stickers — designed with motion and intent.</p>
+      </div>
 
+      <nav class="footer-col" aria-label="Footer navigation">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
 
-  </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <div class="social-links-grid">
+         <a href="https://bloopistudio.github.io/bloopix-studio/" target="_blank" class="social-btn">
+          <img src="assets/images/footer/http.svg" alt="Internet">
+          <span>Bloopix</span>
+         </a>
+         <a href="https://www.facebook.com/yourhandle" target="_blank" class="social-btn">
+          <img src="assets/images/footer/pintrest.svg" alt="Pintrest">
+          <span>Pintrest</span>
+         </a>
+         <a href="https://www.redbubble.com/people/Bloopix-Studio/shop?asc=u" target="_blank" class="social-btn">
+          <img src="assets/images/footer/redbubble.svg" alt="Redbubble">
+          <span>Redbubble</span>
+         </a>
+          <a href="https://www.instagram.com/bloopixstudio/?utm_source=ig_web_button_share_sheet" target="_blank" class="social-btn">
+          <img src="assets/images/footer/instagram.svg" alt="Instagram">
+          <span>Instagram</span>
+         </a>
+       </div>
+      </div>
+    </div>
 
-  <div class="footer-bottom">
-    <p>© 2026 Bloopix Studio. All rights reserved.</p>
+    <div class="footer-bottom">
+      <p>© 2026 Bloopix Studio. All rights reserved.</p>
+    </div>
+
   </div>
 </footer>
 
 
 <script>
-(() => {
-  const isHome =
-    location.pathname === "/" ||
-    location.pathname.endsWith("index.html");
-
-  if (!isHome) return;
-
-  const loader = document.getElementById("loader");
-  if (!loader) return;
-
-  const visited = sessionStorage.getItem("homeVisited");
-
-  // Lock scroll while loader is visible
-  document.documentElement.classList.add("loading");
-  document.body.classList.add("loading");
-
-  window.addEventListener("load", () => {
-
-    // If already visited → remove immediately
-    if (visited) {
-      loader.remove();
-      document.documentElement.classList.remove("loading");
-      document.body.classList.remove("loading");
-      safeInit();
-      return;
-    }
-
-    // First visit animation
-    gsap.to(loader, {
-      opacity: 0,
-      duration: 0.7,
-      ease: "power2.out",
-      delay: 0.6,
-      onComplete: () => {
-        loader.remove();
-        sessionStorage.setItem("homeVisited", "true");
-        document.documentElement.classList.remove("loading");
-        document.body.classList.remove("loading");
-        safeInit();
-      }
-    });
-  });
-
-  function safeInit() {
-    if (window.initLenis) initLenis();
-    if (window.initGSAP) initGSAP();
-    if (window.initCursor) initCursor();
-  }
-})();
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
