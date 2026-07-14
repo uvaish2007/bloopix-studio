@@ -1,20 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="bloopixGrad" x1="4" y1="4" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#9C8CFF"/>
-      <stop offset="1" stop-color="#6238F0"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <g transform="translate(20,14) skewY(-12)">
+    <!-- tilted plate -->
+    <rect x="0" y="0" width="64" height="88" fill="#0A0A0A"/>
 
-  <!-- sticker badge with a die-cut peeled corner -->
-  <path d="M20,6 L44,6 A14,14 0 0 1 58,20 L58,44 A14,14 0 0 1 44,58
-           L20,58 L6,44 L6,20 A14,14 0 0 1 20,6 Z" fill="url(#bloopixGrad)"/>
+    <!-- pixel-block "B" monogram -->
+    <g transform="translate(12,16)" fill="#ffffff">
+      <rect x="0"  y="0"  width="8" height="8"/>
+      <rect x="8"  y="0"  width="8" height="8"/>
+      <rect x="16" y="0"  width="8" height="8"/>
+      <rect x="24" y="0"  width="8" height="8"/>
 
-  <!-- peeled corner flap -->
-  <path d="M6,44 L20,58 L9,58.5 A5,5 0 0 1 5.5,55 Z" fill="#160F2E" opacity="0.55"/>
+      <rect x="0"  y="8"  width="8" height="8"/>
+      <rect x="32" y="8"  width="8" height="8"/>
 
-  <!-- monogram -->
-  <text x="34" y="35" text-anchor="middle" dominant-baseline="central"
-        font-family="Arial, Helvetica, sans-serif" font-weight="800"
-        font-size="30" fill="#0A0A0A">B</text>
+      <rect x="0"  y="16" width="8" height="8"/>
+      <rect x="32" y="16" width="8" height="8"/>
+
+      <rect x="0"  y="24" width="8" height="8"/>
+      <rect x="8"  y="24" width="8" height="8"/>
+      <rect x="16" y="24" width="8" height="8"/>
+      <rect x="24" y="24" width="8" height="8"/>
+
+      <rect x="0"  y="32" width="8" height="8"/>
+      <rect x="32" y="32" width="8" height="8"/>
+
+      <rect x="0"  y="40" width="8" height="8"/>
+      <rect x="32" y="40" width="8" height="8"/>
+
+      <rect x="0"  y="48" width="8" height="8"/>
+      <rect x="8"  y="48" width="8" height="8"/>
+      <rect x="16" y="48" width="8" height="8"/>
+      <rect x="24" y="48" width="8" height="8"/>
+    </g>
+  </g>
 </svg>

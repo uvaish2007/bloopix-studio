@@ -198,8 +198,7 @@ function initLenis() {
       independently-moving child compounded into jittery motion. Now
       only the heading/intro text of a section reveals as a block; cards
       always own their motion.
-   2. `.footer-card` (now `.footer-cta`/`.footer-col`) reveal used to
-      live in its own standalone
+   2. The footer reveal used to live in its own standalone
       `window.addEventListener("load", ...)` outside the init flow — if
       main.js finished parsing after "load" had already fired, that
       listener would silently never run. It's now part of the same
@@ -218,7 +217,7 @@ function initScrollReveals() {
     });
   });
 
-  gsap.utils.toArray(".product-card, .card").forEach((card, i) => {
+  gsap.utils.toArray(".product-card, .card, .request-card").forEach((card, i) => {
     gsap.from(card, {
       y: 40,
       opacity: 0,
@@ -229,14 +228,14 @@ function initScrollReveals() {
     });
   });
 
-  gsap.utils.toArray(".footer-cta, .footer-col").forEach((card, i) => {
-    gsap.from(card, {
+  gsap.utils.toArray(".footer-top, .footer-wordmark-wrap").forEach((el, i) => {
+    gsap.from(el, {
       y: 40,
       opacity: 0,
       duration: 0.8,
-      delay: i * 0.08,
+      delay: i * 0.1,
       ease,
-      scrollTrigger: { trigger: card, start: "top 92%", once: true }
+      scrollTrigger: { trigger: el, start: "top 92%", once: true }
     });
   });
 }
@@ -250,7 +249,7 @@ function initMagnetic() {
   if (prefersReducedMotion || !canHover) return;
 
   document
-    .querySelectorAll(".nav a, .view-btn, .footer-request-form button, .social-btn")
+    .querySelectorAll(".nav a, .view-btn, .request-form button, .footer-social-icons a")
     .forEach((el) => {
       const xTo = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
       const yTo = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
@@ -311,7 +310,7 @@ function initCursor() {
   });
 
   document
-    .querySelectorAll("a, button, .product-card, .card, .footer-cta, .social-btn")
+    .querySelectorAll("a, button, .product-card, .card, .request-card, .footer-social-icons a")
     .forEach((el) => {
       el.addEventListener("mouseenter", () => {
         hovering = true;
