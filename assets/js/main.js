@@ -2,40 +2,39 @@
 
 gsap.registerPlugin(ScrollTrigger);
 
-const prefersReducedMotion =
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const canHover =
-  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+/* Two checks used all over this file: skip motion if the visitor asked for
+   less of it, and skip mouse-only effects on touch screens. */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-let siteInitialized = false;
-let lenisInstance = null;
-let cursorInitialized = false;
+/* "resize" must stay in this list or scroll positions go stale when the
+   window resizes or a phone is rotated. */
+ScrollTrigger.config({
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize"
+});
 
-/* Wrap each line of the hero headline in a clipped span so it can roll into view */
-function wrapMaskLines(el) {
-  if (!el || el.dataset.masked) return [];
-  el.dataset.masked = "true";
 
-  const lines = el.innerHTML.split(/<br\s*\/?>/i);
-  el.innerHTML = lines
-    .map(
-      (line) =>
-        `<span class="mask-line"><span class="mask-inner">${line.trim()}</span></span>`
-    )
+/* Split the hero headline on <br> and wrap each line in a clipped span, so the
+   lines can roll up into view. Returns the spans to animate. */
+function splitHeroHeadline() {
+  const title = document.querySelector(".hero h1");
+  if (!title) return [];
+
+  title.innerHTML = title.innerHTML
+    .split(/<br\s*\/?>/i)
+    .map((line) => `<span class="mask-line"><span class="mask-inner">${line.trim()}</span></span>`)
     .join("");
 
-  return Array.from(el.querySelectorAll(".mask-inner"));
+  return Array.from(title.querySelectorAll(".mask-inner"));
 }
 
-const heroTitleEl = document.querySelector(".hero h1");
-const heroMaskLines = wrapMaskLines(heroTitleEl);
-
-/* Hero intro. Built paused so the hero is already hidden behind the loader,
-   then played the moment the loader fades — otherwise it flashes into place. */
+/* Hero intro. Built now but paused, so the hero is already hidden while the
+   loader covers it. Building it later makes the hero flash into place. */
+const heroLines = splitHeroHeadline();
 const heroIntro = gsap.timeline({ paused: true });
 
-if (heroMaskLines.length) {
-  heroIntro.from(heroMaskLines, {
+if (heroLines.length) {
+  heroIntro.from(heroLines, {
     yPercent: 110,
     duration: 1,
     ease: "expo.out",
@@ -45,235 +44,209 @@ if (heroMaskLines.length) {
 
 heroIntro.from(
   ".hero p",
-  {
-    y: 24,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power3.out"
-  },
-  heroMaskLines.length ? "-=0.55" : 0
+  { y: 24, opacity: 0, duration: 0.8, ease: "power3.out" },
+  heroLines.length ? "-=0.55" : 0
 );
 
-if (prefersReducedMotion) heroIntro.progress(1);
+if (reduceMotion) heroIntro.progress(1);
 
-/* Loader: fade it out once the page loads, then start the rest of the site */
-(() => {
+
+/* The page can reach the finished state more than one way, so guard this:
+   running it twice stacks duplicate animations on the same elements. */
+let started = false;
+
+function startSite() {
+  if (started) return;
+  started = true;
+
+  initSmoothScroll();
+  initScrollReveals();
+  initMagneticHover();
+  initCursor();
+}
+
+function setScrollLocked(locked) {
+  document.documentElement.classList.toggle("loading", locked);
+  document.body.classList.toggle("loading", locked);
+}
+
+/* Loader: fade it out once the page has loaded, then start the site. */
+function initLoader() {
   const loader = document.getElementById("loader");
 
   if (!loader) {
     window.addEventListener("load", () => {
       heroIntro.play();
-      initSiteOnce();
+      startSite();
     });
     return;
   }
 
-  lockScroll();
+  setScrollLocked(true);
 
-  let exited = false;
+  let hidden = false;
 
-  function exitLoader() {
-    if (exited) return;
-    exited = true;
+  function hideLoader() {
+    if (hidden) return;
+    hidden = true;
 
     gsap.to(loader, {
       opacity: 0,
-      duration: prefersReducedMotion ? 0.15 : 0.6,
+      duration: reduceMotion ? 0.15 : 0.6,
       ease: "power2.out",
       onComplete() {
         loader.remove();
-        unlockScroll();
+        setScrollLocked(false);
         heroIntro.play();
-        initSiteOnce();
+        startSite();
         ScrollTrigger.refresh(true);
       }
     });
   }
 
   window.addEventListener("load", () => {
-    setTimeout(exitLoader, prefersReducedMotion ? 0 : 300);
+    setTimeout(hideLoader, reduceMotion ? 0 : 300);
   });
 
-  // "resize" must stay in this list or scroll positions go stale when the
-  // window resizes or a phone is rotated
-  ScrollTrigger.config({
-    autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize"
-  });
+  /* Failsafe: never leave the loader stuck on screen. */
+  setTimeout(hideLoader, 3500);
 
-  // Failsafe: never leave the loader stuck on screen
-  setTimeout(exitLoader, 3500);
-
-  // Coming back via the browser's back button restores the old page as-is,
-  // so clear the loader and skip straight to the finished state
+  /* Arriving via the back button restores the finished page, so skip the
+     intro and just clear the loader. */
   window.addEventListener("pageshow", (e) => {
-    if (e.persisted) {
-      unlockScroll();
-      loader?.remove();
-      heroIntro.progress(1);
-      initSiteOnce();
-      ScrollTrigger.refresh(true);
-    }
+    if (!e.persisted) return;
+
+    setScrollLocked(false);
+    loader.remove();
+    heroIntro.progress(1);
+    startSite();
+    ScrollTrigger.refresh(true);
   });
-
-  function lockScroll() {
-    document.documentElement.classList.add("loading");
-    document.body.classList.add("loading");
-  }
-
-  function unlockScroll() {
-    document.documentElement.classList.remove("loading");
-    document.body.classList.remove("loading");
-  }
-})();
-
-/* Single entry point for every page. The guard matters: running it twice
-   stacks duplicate animations on the same elements. */
-function initSiteOnce() {
-  if (siteInitialized) return;
-  siteInitialized = true;
-
-  initLenis();
-  initScrollReveals();
-  initMagnetic();
-  initCursor();
 }
 
-/* Smooth scrolling — desktop only, and off for reduced-motion visitors */
-function initLenis() {
-  if (prefersReducedMotion) return;
-  if (!window.Lenis) return;
-  if (window.innerWidth < 768) return;
-  if (lenisInstance) return;
+/* Smooth scrolling — desktop only, and off for reduced-motion visitors. */
+function initSmoothScroll() {
+  if (reduceMotion || !window.Lenis || window.innerWidth < 768) return;
 
-  lenisInstance = new Lenis({
-    lerp: 0.07,
-    smoothWheel: true
-  });
+  const lenis = new Lenis({ lerp: 0.07, smoothWheel: true });
 
-  gsap.ticker.add((time) => {
-    lenisInstance.raf(time * 1000);
-  });
-
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
-
-  lenisInstance.on("scroll", ScrollTrigger.update);
+  lenis.on("scroll", ScrollTrigger.update);
 
   ScrollTrigger.refresh();
 }
 
-/* Fade-and-rise elements in as they scroll into view. Headings, cards and
-   footer animate separately — animating a section and its cards at once
-   compounds the movement and looks jittery. */
+/* Fade a group of elements up into view as they scroll in. `stagger` delays
+   each item after the one before it; `perRow` restarts that delay on each
+   new row, so a grid comes in row by row instead of one long ripple. */
+function revealOnScroll(selector, { y, duration, start, stagger = 0, perRow = 0 }) {
+  gsap.utils.toArray(selector).forEach((el, i) => {
+    const step = perRow ? i % perRow : i;
+
+    gsap.from(el, {
+      y,
+      opacity: 0,
+      duration,
+      delay: step * stagger,
+      ease: "power3.out",
+      scrollTrigger: { trigger: el, start, once: true }
+    });
+  });
+}
+
+/* Headings, cards and footer reveal separately on purpose — animating a
+   section and its cards together compounds the movement and looks jittery. */
 function initScrollReveals() {
-  const ease = "power3.out";
-
-  gsap.utils.toArray(".section-title, .shop-preview, .section > p").forEach((el) => {
-    gsap.from(el, {
-      y: 36,
-      opacity: 0,
-      duration: 0.7,
-      ease,
-      scrollTrigger: { trigger: el, start: "top 85%", once: true }
-    });
+  revealOnScroll(".section-title, .shop-preview, .section > p", {
+    y: 36,
+    duration: 0.7,
+    start: "top 85%"
   });
 
-  gsap.utils.toArray(".product-card, .card, .request-card").forEach((card, i) => {
-    gsap.from(card, {
-      y: 40,
-      opacity: 0,
-      duration: 0.6,
-      delay: (i % 3) * 0.08,
-      ease,
-      scrollTrigger: { trigger: card, start: "top 88%", once: true }
-    });
+  revealOnScroll(".product-card, .card, .request-card", {
+    y: 40,
+    duration: 0.6,
+    start: "top 88%",
+    stagger: 0.08,
+    perRow: 3
   });
 
-  gsap.utils.toArray(".footer-top, .footer-wordmark-wrap").forEach((el, i) => {
-    gsap.from(el, {
-      y: 40,
-      opacity: 0,
-      duration: 0.8,
-      delay: i * 0.1,
-      ease,
-      scrollTrigger: { trigger: el, start: "top 92%", once: true }
+  revealOnScroll(".footer-top, .footer-wordmark-wrap", {
+    y: 40,
+    duration: 0.8,
+    start: "top 92%",
+    stagger: 0.1
+  });
+}
+
+/* Buttons and links drift slightly toward the cursor while hovered. */
+function initMagneticHover() {
+  if (reduceMotion || !canHover) return;
+
+  const targets = ".nav a, .view-btn, .request-form button, .footer-social-icons a";
+
+  document.querySelectorAll(targets).forEach((el) => {
+    const moveX = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
+    const moveY = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
+
+    el.addEventListener("mousemove", (e) => {
+      const box = el.getBoundingClientRect();
+
+      moveX((e.clientX - box.left - box.width / 2) * 0.3);
+      moveY((e.clientY - box.top - box.height / 2) * 0.3);
+    });
+
+    el.addEventListener("mouseleave", () => {
+      moveX(0);
+      moveY(0);
     });
   });
 }
 
-/* Buttons and links drift slightly toward the cursor when hovered */
-function initMagnetic() {
-  if (prefersReducedMotion || !canHover) return;
-
-  document
-    .querySelectorAll(".nav a, .view-btn, .request-form button, .footer-social-icons a")
-    .forEach((el) => {
-      const xTo = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
-      const yTo = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
-
-      el.addEventListener("mousemove", (e) => {
-        const rect = el.getBoundingClientRect();
-        const relX = e.clientX - rect.left - rect.width / 2;
-        const relY = e.clientY - rect.top - rect.height / 2;
-        xTo(relX * 0.3);
-        yTo(relY * 0.3);
-      });
-
-      el.addEventListener("mouseleave", () => {
-        xTo(0);
-        yTo(0);
-      });
-    });
-}
-
-/* Custom cursor: dot follows the mouse exactly, ring lags behind and grows
-   over anything clickable */
+/* Custom cursor: the dot tracks the mouse exactly, the ring trails behind it
+   and grows over anything clickable. */
 function initCursor() {
-  if (prefersReducedMotion || !canHover) return;
-  if (cursorInitialized) return;
+  if (reduceMotion || !canHover) return;
 
-  const cursor = document.querySelector(".cursor");
-  const follower = document.querySelector(".cursor-follower");
-  if (!cursor || !follower) return;
+  const dot = document.querySelector(".cursor");
+  const ring = document.querySelector(".cursor-follower");
+  if (!dot || !ring) return;
 
-  cursorInitialized = true;
-
-  let mouseX = 0,
-    mouseY = 0;
-  let posX = 0,
-    posY = 0;
+  let mouseX = 0;
+  let mouseY = 0;
+  let ringX = 0;
+  let ringY = 0;
   let hovering = false;
 
   window.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
-    cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
   });
 
-  // The scale has to be written here with the position. Setting it separately
-  // on hover doesn't work — this runs every frame and would overwrite it.
+  /* The scale has to be written here along with the position. Setting it
+     separately on hover doesn't work — this runs every frame and would
+     immediately overwrite it. */
   gsap.ticker.add(() => {
-    posX += (mouseX - posX) * 0.15;
-    posY += (mouseY - posY) * 0.15;
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
 
     const scale = hovering ? 1.5 : 1;
-    follower.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%) scale(${scale})`;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%) scale(${scale})`;
   });
 
-  document
-    .querySelectorAll("a, button, .product-card, .card, .request-card, .footer-social-icons a")
-    .forEach((el) => {
-      el.addEventListener("mouseenter", () => {
-        hovering = true;
-      });
-      el.addEventListener("mouseleave", () => {
-        hovering = false;
-      });
-    });
+  const clickable = "a, button, .product-card, .card, .request-card, .footer-social-icons a";
+
+  document.querySelectorAll(clickable).forEach((el) => {
+    el.addEventListener("mouseenter", () => (hovering = true));
+    el.addEventListener("mouseleave", () => (hovering = false));
+  });
 }
 
-/* Homepage featured grid: shuffle the cards and keep 3, so it varies per visit */
-document.addEventListener("DOMContentLoaded", () => {
+/* Homepage featured grid: shuffle the cards and keep 3, so it varies per visit. */
+function shuffleFeaturedGrid() {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
 
@@ -286,22 +259,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   grid.innerHTML = "";
   cards.slice(0, 3).forEach((card) => grid.appendChild(card));
-});
+}
 
 /* Marquee speed is set from its measured width, so adding or removing text
-   doesn't change how fast the strip travels */
+   doesn't change how fast the strip travels. */
 function initMarquee() {
   const track = document.querySelector(".marquee-track");
   if (!track) return;
 
-  if (prefersReducedMotion) {
+  if (reduceMotion) {
     track.style.animation = "none";
     return;
   }
 
-  const distance = track.scrollWidth / 2;
   const pxPerSecond = 60;
+  const distance = track.scrollWidth / 2;
+
   track.style.setProperty("--marquee-duration", `${distance / pxPerSecond}s`);
 }
 
+
+/* Start */
+initLoader();
+document.addEventListener("DOMContentLoaded", shuffleFeaturedGrid);
 window.addEventListener("load", initMarquee);
