@@ -1,6 +1,4 @@
-/* ==========================================================
-   DESIGN TOKENS
-========================================================== */
+/* Design tokens — colours, easings and fonts used across every page */
 :root {
   --ink: #0e0e0f;
   --surface: #141416;
@@ -20,9 +18,7 @@
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* ==========================================================
-   RESET
-========================================================== */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -46,14 +42,12 @@ a {
   color: inherit;
 }
 
-/* Lenis drives smooth scrolling on desktop; native CSS smooth-scroll
-   fights it (double-smoothing / jank on anchor jumps), so it stays off
-   here and is opted back in only when JS/Lenis isn't running. */
+/* Native smooth scroll only when JS is off — otherwise Lenis handles it */
 .no-js html {
   scroll-behavior: smooth;
 }
 
-/* LOCK SCROLL DURING LOADING */
+/* Page can't be scrolled while the loader is up */
 html.loading,
 body.loading {
   overflow: hidden;
@@ -61,9 +55,7 @@ body.loading {
   touch-action: none;
 }
 
-/* ==========================================================
-   LOADER
-========================================================== */
+/* Loader — full-screen splash shown until the page has loaded */
 #loader {
   position: fixed;
   inset: 0;
@@ -90,9 +82,7 @@ body.loading {
   }
 }
 
-/* ==========================================================
-   CUSTOM CURSOR (desktop, fine pointer only — gated in JS)
-========================================================== */
+/* Custom cursor — dot + trailing ring, desktop/mouse only */
 .cursor,
 .cursor-follower {
   position: fixed;
@@ -127,9 +117,7 @@ body.loading {
   }
 }
 
-/* ==========================================================
-   NAVBAR
-========================================================== */
+/* Navbar — fixed, blurred bar with underline-on-hover links */
 .nav {
   position: fixed;
   top: 0;
@@ -189,9 +177,7 @@ body.loading {
   transform: scaleX(1);
 }
 
-/* ==========================================================
-   HERO
-========================================================== */
+/* Hero — full-height intro with a purple glow behind the headline */
 .hero {
   min-height: 100vh;
   padding: 8rem 4rem 4rem;
@@ -227,9 +213,7 @@ body.loading {
   line-height: 1.05;
 }
 
-/* Masked line-reveal wrapper — created dynamically in JS. If JS never
-   runs, .mask-inner has no transform applied and the headline is fully
-   visible, so the page still works with no script. */
+/* Wrapper that lets each headline line roll up into view (spans built in JS) */
 .mask-line {
   display: block;
   overflow: hidden;
@@ -247,9 +231,7 @@ body.loading {
   font-size: clamp(1rem, 1.4vw, 1.15rem);
 }
 
-/* ==========================================================
-   MARQUEE
-========================================================== */
+/* Marquee — the scrolling strip of selling points under the hero */
 .marquee {
   overflow: hidden;
   border-top: 1px solid var(--border);
@@ -289,9 +271,7 @@ body.loading {
   }
 }
 
-/* ==========================================================
-   SECTIONS
-========================================================== */
+/* Sections — shared page-block spacing and headings */
 .section {
   padding: 6rem 4rem;
   scroll-margin-top: 80px;
@@ -304,9 +284,7 @@ body.loading {
   margin-bottom: 3rem;
 }
 
-/* ==========================================================
-   GRID / PRODUCT CARDS
-========================================================== */
+/* Product grid — responsive card layout that lifts on hover */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -387,9 +365,7 @@ body.loading {
   color: var(--text-faint);
 }
 
-/* ==========================================================
-   BUTTONS — directional-fill hover
-========================================================== */
+/* Buttons — accent colour slides up from the bottom on hover */
 .view-btn {
   position: relative;
   z-index: 1;
@@ -427,9 +403,7 @@ body.loading {
   transform: translateY(0);
 }
 
-/* ==========================================================
-   NOTIFY (kept for pages that still use it)
-========================================================== */
+/* Email sign-up block — unused right now, kept for future pages */
 .notify-section {
   margin: 4rem auto;
   max-width: 720px;
@@ -481,9 +455,7 @@ body.loading {
   opacity: 0.85;
 }
 
-/* ==========================================================
-   GENERIC CARD (About & Contact)
-========================================================== */
+/* Plain text card — used on the About and Contact pages */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -501,9 +473,7 @@ body.loading {
   color: var(--text-dim);
 }
 
-/* ==========================================================
-   FOOTER — nav columns + social row + a giant full-width wordmark
-========================================================== */
+/* Footer — link columns, social row, and the giant BLOOPIX wordmark */
 footer {
   background: var(--ink);
   border-top: 1px solid var(--border);
@@ -624,14 +594,8 @@ footer {
   user-select: none;
 }
 
-/* Solid per-letter colour steps (white -> accent-light -> accent) instead of
-   a single background-clip:text gradient on the parent: a gradient shared
-   across sibling elements only renders correctly while every letter paints
-   on the same layer as its parent. The moment a hover animation gives a
-   <span> its own compositing layer, that shared-layer trick falls apart and
-   the letter goes fully transparent — which is exactly what made the peel
-   animation flash the word invisible the instant hover started. Solid
-   `color` per span has no such dependency, so it survives the animation. */
+/* Wordmark fades white -> purple one letter at a time. These must stay solid
+   colours, not a shared gradient — a gradient goes invisible mid-hover. */
 .footer-wordmark span {
   display: inline-block;
   transition: transform 0.4s var(--ease);
@@ -694,7 +658,7 @@ footer {
   transform: rotate(12deg);
 }
 
-/* --- Request-a-sticker banner (used on the Contact page only) --- */
+/* Request-a-sticker banner and form — Contact page only */
 .request-card {
   display: flex;
   align-items: center;
@@ -778,9 +742,7 @@ footer {
   transform: translateY(0);
 }
 
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
+/* Responsive — tablet and phone adjustments */
 @media (max-width: 768px) {
   footer {
     padding: 3rem 1.5rem 0;
@@ -831,9 +793,7 @@ footer {
   }
 }
 
-/* ==========================================================
-   ACCESSIBILITY — respect reduced motion everywhere
-========================================================== */
+/* Accessibility — near-disable all motion if the visitor asked for less of it */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

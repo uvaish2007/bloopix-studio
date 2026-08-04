@@ -1,6 +1,5 @@
-/* ======================
-   GSAP REGISTER
-====================== */
+/* Site-wide animation: loader, hero intro, scroll reveals, cursor, marquee. */
+
 gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion =
@@ -8,20 +7,11 @@ const prefersReducedMotion =
 const canHover =
   window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-/* ======================
-   GLOBAL STATE
-====================== */
 let siteInitialized = false;
 let lenisInstance = null;
 let cursorInitialized = false;
 
-/* ======================
-   MASKED HERO HEADLINE
-   Wraps each visual line of the hero <h1> in a clipped span so it can
-   roll up into view. Runs immediately (before the loader even exits) so
-   the hidden "from" state is set while the loader still covers it —
-   this must happen before heroIntro below is built.
-====================== */
+/* Wrap each line of the hero headline in a clipped span so it can roll into view */
 function wrapMaskLines(el) {
   if (!el || el.dataset.masked) return [];
   el.dataset.masked = "true";
@@ -40,15 +30,8 @@ function wrapMaskLines(el) {
 const heroTitleEl = document.querySelector(".hero h1");
 const heroMaskLines = wrapMaskLines(heroTitleEl);
 
-/* ======================
-   HERO INTRO TIMELINE (armed immediately, played once the loader exits)
-   Built as a paused timeline so its `from()` calls apply their hidden
-   starting state the instant this script runs (immediateRender), while
-   the loader is still covering the screen. That state then sits ready
-   until .play() is called — this avoids the old bug where the hero
-   flashed into its final position for a frame right as the loader
-   faded, then jump-cut back to its offset start before animating in.
-====================== */
+/* Hero intro. Built paused so the hero is already hidden behind the loader,
+   then played the moment the loader fades — otherwise it flashes into place. */
 const heroIntro = gsap.timeline({ paused: true });
 
 if (heroMaskLines.length) {
@@ -73,9 +56,7 @@ heroIntro.from(
 
 if (prefersReducedMotion) heroIntro.progress(1);
 
-/* ======================
-   GLOBAL LOADER (SAFE)
-====================== */
+/* Loader: fade it out once the page loads, then start the rest of the site */
 (() => {
   const loader = document.getElementById("loader");
 
@@ -113,18 +94,17 @@ if (prefersReducedMotion) heroIntro.progress(1);
     setTimeout(exitLoader, prefersReducedMotion ? 0 : 300);
   });
 
-  // NOTE: GSAP's default autoRefreshEvents is
-  // "visibilitychange,DOMContentLoaded,load,resize" — the previous config
-  // here silently dropped "resize", so ScrollTrigger start/end positions
-  // went stale on window resize / mobile orientation change. Keep resize.
+  // "resize" must stay in this list or scroll positions go stale when the
+  // window resizes or a phone is rotated
   ScrollTrigger.config({
     autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize"
   });
 
-  // Hard failsafe
+  // Failsafe: never leave the loader stuck on screen
   setTimeout(exitLoader, 3500);
 
-  // Back/forward cache fix
+  // Coming back via the browser's back button restores the old page as-is,
+  // so clear the loader and skip straight to the finished state
   window.addEventListener("pageshow", (e) => {
     if (e.persisted) {
       unlockScroll();
@@ -146,14 +126,8 @@ if (prefersReducedMotion) heroIntro.progress(1);
   }
 })();
 
-/* ======================
-   INIT SITE (ONCE)
-   Guarded by siteInitialized so it can never double-run — previously
-   index.html had a second, independent loader/init script that raced
-   this one and could call initGSAP() twice on a first visit, stacking
-   duplicate ScrollTriggers on the same elements. That duplicate script
-   has been removed; this is now the single entry point on every page.
-====================== */
+/* Single entry point for every page. The guard matters: running it twice
+   stacks duplicate animations on the same elements. */
 function initSiteOnce() {
   if (siteInitialized) return;
   siteInitialized = true;
@@ -164,9 +138,7 @@ function initSiteOnce() {
   initCursor();
 }
 
-/* ======================
-   LENIS (SMOOTH SCROLL)
-====================== */
+/* Smooth scrolling — desktop only, and off for reduced-motion visitors */
 function initLenis() {
   if (prefersReducedMotion) return;
   if (!window.Lenis) return;
@@ -189,21 +161,9 @@ function initLenis() {
   ScrollTrigger.refresh();
 }
 
-/* ======================
-   SCROLL REVEALS
-   Consolidated into one pass. Two things were fixed vs. the old code:
-   1. The whole `.section` wrapper used to animate as a block (y:50)
-      at the same time its child `.product-card`s independently animated
-      (y:40) with their own triggers — a moving parent plus an
-      independently-moving child compounded into jittery motion. Now
-      only the heading/intro text of a section reveals as a block; cards
-      always own their motion.
-   2. The footer reveal used to live in its own standalone
-      `window.addEventListener("load", ...)` outside the init flow — if
-      main.js finished parsing after "load" had already fired, that
-      listener would silently never run. It's now part of the same
-      guarded init path as everything else.
-====================== */
+/* Fade-and-rise elements in as they scroll into view. Headings, cards and
+   footer animate separately — animating a section and its cards at once
+   compounds the movement and looks jittery. */
 function initScrollReveals() {
   const ease = "power3.out";
 
@@ -240,11 +200,7 @@ function initScrollReveals() {
   });
 }
 
-/* ======================
-   MAGNETIC HOVER (buttons + nav links)
-   Desktop-with-precise-pointer only; skipped entirely under
-   prefers-reduced-motion.
-====================== */
+/* Buttons and links drift slightly toward the cursor when hovered */
 function initMagnetic() {
   if (prefersReducedMotion || !canHover) return;
 
@@ -269,9 +225,8 @@ function initMagnetic() {
     });
 }
 
-/* ======================
-   CURSOR (OPTIMIZED)
-====================== */
+/* Custom cursor: dot follows the mouse exactly, ring lags behind and grows
+   over anything clickable */
 function initCursor() {
   if (prefersReducedMotion || !canHover) return;
   if (cursorInitialized) return;
@@ -295,12 +250,8 @@ function initCursor() {
     cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
   });
 
-  // Previously: `follower.style.transform += " scale(1.5)"` on hover.
-  // This ticker runs every frame and unconditionally overwrites
-  // follower.style.transform, so the appended scale was wiped out on
-  // the very next tick — the hover-grow effect never actually held.
-  // Tracking hover state and folding scale into the same transform
-  // string the ticker writes each frame fixes it.
+  // The scale has to be written here with the position. Setting it separately
+  // on hover doesn't work — this runs every frame and would overwrite it.
   gsap.ticker.add(() => {
     posX += (mouseX - posX) * 0.15;
     posY += (mouseY - posY) * 0.15;
@@ -321,9 +272,7 @@ function initCursor() {
     });
 }
 
-/* ======================
-   MOBILE FEATURED-GRID SHUFFLE (index.html only)
-====================== */
+/* Homepage featured grid: shuffle the cards and keep 3, so it varies per visit */
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
@@ -339,10 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
   cards.slice(0, 3).forEach((card) => grid.appendChild(card));
 });
 
-/* ======================
-   MARQUEE (duration derived from measured width so speed stays
-   constant regardless of how much text is in the strip)
-====================== */
+/* Marquee speed is set from its measured width, so adding or removing text
+   doesn't change how fast the strip travels */
 function initMarquee() {
   const track = document.querySelector(".marquee-track");
   if (!track) return;
